@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 # Copyright 2012 Bjarte Johansen
 
 # This file is part of Selfspy
@@ -36,7 +38,7 @@ from Quartz import (
     kCGNullWindowID
 )
 from PyObjCTools import AppHelper
-import config as cfg
+from . import config as cfg
 import signal
 import time
 

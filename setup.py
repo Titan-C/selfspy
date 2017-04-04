@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import platform
 
@@ -13,7 +14,7 @@ else:
 with open(os.path.join(os.path.dirname(__file__), req_file)) as f:
     requires = list(f.readlines())
 
-print '"%s"' % requires
+print('"%s"' % requires)
 
 from setuptools import setup
 

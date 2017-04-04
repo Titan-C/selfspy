@@ -17,6 +17,7 @@
 
 import time
 from datetime import datetime
+from functools import reduce
 NOW = datetime.now
 
 import sqlalchemy

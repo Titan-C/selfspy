@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright 2012 David Fendrich
 
 # This file is part of Selfspy
@@ -53,10 +54,10 @@ def get_keyring_password(verify, message=None):
 
         if pw is not None:
             if (not verify) or not verify(pw):
-                print 'The keyring password is not valid. Please, input the correct one.'
+                print('The keyring password is not valid. Please, input the correct one.')
                 pw = get_user_password(verify, message, force_save=True)
     except ImportError:
-        print 'keyring library not found'
+        print('keyring library not found')
 
     return pw
 
@@ -67,11 +68,11 @@ def set_keyring_password(password):
         usr = getpass.getuser()
         keyring.set_password('Selfspy', usr, password)
     except ImportError:
-        print 'Unable to save password to keyring (library not found)'
+        print('Unable to save password to keyring (library not found)')
     except NameError:
         pass
     except:
-        print 'Unable to save password to keyring'
+        print('Unable to save password to keyring')
 
 
 def get_tty_password(verify, message=None, force_save=False):
@@ -86,7 +87,7 @@ def get_tty_password(verify, message=None, force_save=False):
             break
 
     if not verified:
-        print 'Password failed'
+        print('Password failed')
         sys.exit(1)
 
     if not force_save:
@@ -160,4 +161,4 @@ class PasswordDialog(Dialog):
 
 
 if __name__ == '__main__':
-    print get_password()
+    print(get_password())
