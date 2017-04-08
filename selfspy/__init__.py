@@ -27,7 +27,7 @@ import configparser
 from lockfile import LockFile
 
 import hashlib
-from Crypto.Cipher import Blowfish
+from cryptography.fernet import Fernet
 
 from selfspy.activity_store import ActivityStore
 from selfspy.password_dialog import get_password
@@ -74,11 +74,11 @@ def parse_config():
     return parser.parse_args()
 
 
-def make_encrypter(password):
-    if password == "":
+def make_encrypter(cipher_key):
+    if cipher_key == "":
         encrypter = None
     else:
-        encrypter = Blowfish.new(hashlib.md5(password).digest())
+        encrypter = Fernet(cipher_key)
     return encrypter
 
 

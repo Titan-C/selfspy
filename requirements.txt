@@ -2,4 +2,5 @@ SQLAlchemy>=0.9.4
 lockfile>=0.9.1
 pycrypto>=2.5
 keyring>=1.2.2
+keyrings.alt>=2.2
 python-xlib>=0.19

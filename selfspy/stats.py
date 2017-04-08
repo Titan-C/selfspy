@@ -18,7 +18,7 @@
 # along with Selfspy.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
-from __future__ import absolute_import
+
 import os
 import sys
 import re
@@ -30,19 +30,13 @@ import configparser
 
 from collections import Counter
 
-from Crypto.Cipher import Blowfish
-import hashlib
-
-from . import config as cfg
-
+from selfspy import make_encrypter
+from selfspy import config as cfg
 from selfspy import check_password
 from selfspy.password_dialog import get_password
 from selfspy.period import Period
 
 from selfspy import models
-
-import codecs
-sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
 ACTIVE_SECONDS = 180
 PERIOD_LOOKUP = {'s': 'seconds', 'm': 'minutes',
@@ -585,14 +579,6 @@ def parse_config():
                         help='List window titles sorted by number of keystrokes.')
 
     return parser.parse_args()
-
-
-def make_encrypter(password):
-    if password == "":
-        encrypter = None
-    else:
-        encrypter = Blowfish.new(hashlib.md5(password).digest())
-    return encrypter
 
 
 def main():

@@ -126,7 +126,7 @@ def pad(s, padnum):
     ls = len(s)
     if ls % padnum == 0:
         return s
-    return s + '\0' * (padnum - (ls % padnum))
+    return s + b'\0' * (padnum - (ls % padnum))
 
 
 def maybe_encrypt(s, other_encrypter=None):
@@ -166,7 +166,7 @@ class Keys(SpookMixin, Base):
     timings = Column(Binary)
 
     def __init__(self, text, keys, timings, nrkeys, started, process_id, window_id, geometry_id):
-        ztimings = zlib.compress(json.dumps(timings))
+        ztimings = zlib.compress(json.dumps(timings).encode('utf-8'))
 
         self.encrypt_text(text)
         self.encrypt_keys(keys)
@@ -184,7 +184,7 @@ class Keys(SpookMixin, Base):
         self.text = ztext
 
     def encrypt_keys(self, keys, other_encrypter=None):
-        zkeys = maybe_encrypt(zlib.compress(json.dumps(keys)),
+        zkeys = maybe_encrypt(zlib.compress(json.dumps(keys).encode('utf-8')),
                               other_encrypter=other_encrypter)
         self.keys = zkeys
 

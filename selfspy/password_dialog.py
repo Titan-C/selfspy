@@ -74,15 +74,20 @@ def set_keyring_password(password):
         pass
     except:
         print('Unable to save password to keyring')
+        raise
 
 
 def get_tty_password(verify, message=None, force_save=False):
     verified = False
-    for i in xrange(3):
+    for i in range(3):
         if message:
-            pw = getpass.getpass(message)
+            pw = getpass.getpass(message).encode('utf-8')
         else:
-            pw = getpass.getpass()
+            pw = getpass.getpass().encode('utf-8')
+
+        from cryptography.fernet import Fernet
+        pw = Fernet.generate_key()
+
         if (not verify) or verify(pw):
             verified = True
             break
@@ -93,8 +98,7 @@ def get_tty_password(verify, message=None, force_save=False):
 
     if not force_save:
         while True:
-            store = raw_input(
-                "Do you want to store the password in the keychain [Y/N]: ")
+            store = input("Do you want to store the password in the keychain [Y/N]: ")
             if store.lower() in ['n', 'y']:
                 break
         save_to_keychain = store.lower() == 'y'
