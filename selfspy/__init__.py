@@ -22,7 +22,7 @@ import os
 import sys
 
 import argparse
-import ConfigParser
+import configparser
 
 from lockfile import LockFile
 
@@ -46,25 +46,30 @@ def parse_config():
     defaults = {}
     if args.config:
         if not os.path.exists(args.config):
-            raise  EnvironmentError("Config file %s doesn't exist." % args.config)
-        config = ConfigParser.SafeConfigParser()
+            raise EnvironmentError(
+                "Config file %s doesn't exist." % args.config)
+        config = configparser.SafeConfigParser()
         config.read([args.config])
         defaults = dict(config.items('Defaults'))
     else:
         if os.path.exists(os.path.expanduser('~/.selfspy/selfspy.conf')):
-            config = ConfigParser.SafeConfigParser()
+            config = configparser.SafeConfigParser()
             config.read([os.path.expanduser('~/.selfspy/selfspy.conf')])
             defaults = dict(config.items('Defaults'))
 
-    parser = argparse.ArgumentParser(description='Monitor your computer activities and store them in an encrypted database for later analysis or disaster recovery.', parents=[conf_parser])
+    parser = argparse.ArgumentParser(
+        description='Monitor your computer activities and store them in an encrypted database for later analysis or disaster recovery.', parents=[conf_parser])
     parser.set_defaults(**defaults)
     parser.add_argument('-p', '--password', help='Encryption password. If you want to keep your database unencrypted, specify -p "" here. If you don\'t specify a password in the command line arguments or in a config file, a dialog will pop up, asking for the password. The most secure is to not use either command line or config file but instead type it in on startup.')
-    parser.add_argument('-d', '--data-dir', help='Data directory for selfspy, where the database is stored. Remember that Selfspy must have read/write access. Default is %s' % cfg.DATA_DIR, default=cfg.DATA_DIR)
+    parser.add_argument('-d', '--data-dir', help='Data directory for selfspy, where the database is stored. Remember that Selfspy must have read/write access. Default is %s' %
+                        cfg.DATA_DIR, default=cfg.DATA_DIR)
 
     parser.add_argument('-n', '--no-text', action='store_true', help='Do not store what you type. This will make your database smaller and less sensitive to security breaches. Process name, window titles, window geometry, mouse clicks, number of keys pressed and key timings will still be stored, but not the actual letters. Key timings are stored to enable activity calculation in selfstats. If this switch is used, you will never be asked for password.')
-    parser.add_argument('-r', '--no-repeat', action='store_true', help='Do not store special characters as repeated characters.')
+    parser.add_argument('-r', '--no-repeat', action='store_true',
+                        help='Do not store special characters as repeated characters.')
 
-    parser.add_argument('--change-password', action="store_true", help='Change the password used to encrypt the keys columns and exit.')
+    parser.add_argument('--change-password', action="store_true",
+                        help='Change the password used to encrypt the keys columns and exit.')
 
     return parser.parse_args()
 
