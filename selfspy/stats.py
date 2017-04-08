@@ -56,32 +56,7 @@ BUTTON_MAP = [('button1', 'left'),
 
 
 def pretty_seconds(secs):
-    secs = int(secs)
-    active = False
-    outs = ''
-    days = secs // (3600 * 24)
-    if days:
-        active = True
-        outs += '%d days, ' % days
-    secs -= days * (3600 * 24)
-
-    hours = secs // 3600
-    if hours:
-        active = True
-    if active:
-        outs += '%dh ' % hours
-    secs -= hours * 3600
-
-    minutes = secs // 60
-    if minutes:
-        active = True
-    if active:
-        outs += '%dm ' % minutes
-    secs -= minutes * 60
-
-    outs += '%ds' % secs
-
-    return outs
+    return str(datetime.timedelta(seconds=int(secs)))
 
 
 def make_time_string(dates, clock):
