@@ -19,8 +19,8 @@ from __future__ import print_function
 import sys
 import getpass
 
-from Tkinter import Tk, StringVar
-from tkSimpleDialog import Dialog
+from tkinter import Tk
+from tkinter.simpledialog import Dialog
 
 
 def get_password(verify=None, message=None):
@@ -54,7 +54,8 @@ def get_keyring_password(verify, message=None):
 
         if pw is not None:
             if (not verify) or not verify(pw):
-                print('The keyring password is not valid. Please, input the correct one.')
+                print(
+                    'The keyring password is not valid. Please, input the correct one.')
                 pw = get_user_password(verify, message, force_save=True)
     except ImportError:
         print('keyring library not found')
@@ -92,7 +93,8 @@ def get_tty_password(verify, message=None, force_save=False):
 
     if not force_save:
         while True:
-            store = raw_input("Do you want to store the password in the keychain [Y/N]: ")
+            store = raw_input(
+                "Do you want to store the password in the keychain [Y/N]: ")
             if store.lower() in ['n', 'y']:
                 break
         save_to_keychain = store.lower() == 'y'
@@ -113,8 +115,8 @@ def get_tk_password(verify, message=None, force_save=False):
 
     while True:
         dialog_info = PasswordDialog(title='Selfspy encryption password',
-                            prompt=message,
-                            parent=root)
+                                     prompt=message,
+                                     parent=root)
 
         pw, save_to_keychain = dialog_info.result
 
@@ -151,7 +153,8 @@ class PasswordDialog(Dialog):
 
         self.e1.grid(row=0, column=1)
 
-        self.cb = Checkbutton(master, text="Save to keychain", variable=self.checkVar)
+        self.cb = Checkbutton(
+            master, text="Save to keychain", variable=self.checkVar)
         self.cb.pack()
         self.cb.grid(row=1, columnspan=2, sticky=W)
         self.e1.configure(show='*')
