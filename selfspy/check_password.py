@@ -26,9 +26,8 @@ def check(data_dir, decrypter, read_only=False):
     if os.path.exists(fname):
         if decrypter is None:
             return False
-        f = open(fname, 'rb')
-        s = f.read()
-        f.close()
+        with open(fname, 'rb') as f:
+            s = f.read()
         return decrypter.decrypt(s) == MAGIC_STRING
     else:
         if decrypter is not None:
@@ -36,7 +35,6 @@ def check(data_dir, decrypter, read_only=False):
                 return False
             else:
                 s = decrypter.encrypt(MAGIC_STRING)
-                f = open(fname, 'wb')
-                f.write(s)
-                f.close()
+                with open(fname, 'wb') as f:
+                    f.write(s)
         return True
