@@ -1,0 +1,183 @@
+* What is this?
+
+My version reboot of the selfspy daemon that continuously monitors and
+stores what you are doing on your computer.
+
+* Installing
+
+All linux dependencies shall be installed by setuptools from packages
+in PyPI.
+
+#+BEGIN_SRC bash
+git clone https://github.com/Titan-C/selfspy.git
+cd selfspy
+python setup.py install
+#+END_SRC
+
+* Running selfspy
+
+#+BEGIN_SRC bash :exports results :results output
+selfspy -h
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+usage: selfspy [-h] [-c FILE] [-p PASSWORD] [-d DATA_DIR] [-n] [-r]
+               [--change-password]
+
+Monitor your computer activities and store them in an encrypted database for
+later analysis or disaster recovery.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c FILE, --config FILE
+                        Config file with defaults. Command line parameters
+                        will override those given in the config file. The
+                        config file must start with a "[Defaults]" section,
+                        followed by [argument]=[value] on each line.
+  -p PASSWORD, --password PASSWORD
+                        Encryption password. If you want to keep your database
+                        unencrypted, specify -p "" here. If you don't specify
+                        a password in the command line arguments or in a
+                        config file, a dialog will pop up, asking for the
+                        password. The most secure is to not use either command
+                        line or config file but instead type it in on startup.
+  -d DATA_DIR, --data-dir DATA_DIR
+                        Data directory for selfspy, where the database is
+                        stored. Remember that Selfspy must have read/write
+                        access. Default is ~/.selfspy
+  -n, --no-text         Do not store what you type. This will make your
+                        database smaller and less sensitive to security
+                        breaches. Process name, window titles, window
+                        geometry, mouse clicks, number of keys pressed and key
+                        timings will still be stored, but not the actual
+                        letters. Key timings are stored to enable activity
+                        calculation in selfstats. If this switch is used, you
+                        will never be asked for password.
+  -r, --no-repeat       Do not store special characters as repeated
+                        characters.
+  --change-password     Change the password used to encrypt the keys columns
+                        and exit.
+#+end_example
+
+* Getting the statistics
+#+BEGIN_SRC bash :exports results :results output
+selfstats -h
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+usage: selfstats [-h] [-c FILE] [-p PASSWORD] [-d DATA_DIR] [-s]
+                 [-D DATE [DATE ...]] [-C CLOCK] [-i ID] [-b BACK [BACK ...]]
+                 [-l LIMIT [LIMIT ...]] [-m nr] [-T regexp] [-P regexp]
+                 [-B regexp] [--clicks] [--key-freqs] [--human-readable]
+                 [--active [seconds]] [--ratios [seconds]]
+                 [--periods [seconds]] [--pactive [seconds]]
+                 [--tactive [seconds]] [--pkeys] [--tkeys]
+
+Calculate statistics on selfspy data. Per default it will show non-text
+information that matches the filter. Adding '-s' means also show text. Adding
+any of the summary options will show those summaries over the given filter
+instead of the listing. Multiple summary options can be given to print several
+summaries over the same filter. If you give arguments that need to access text
+/ keystrokes, you will be asked for the decryption password.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c FILE, --config FILE
+                        Config file with defaults. Command line parameters
+                        will override those given in the config file. Options
+                        to selfspy goes in the "[Defaults]" section, followed
+                        by [argument]=[value] on each line. Options specific
+                        to selfstats should be in the "[Selfstats]" section,
+                        though "password" and "data-dir" are still read from
+                        "[Defaults]".
+  -p PASSWORD, --password PASSWORD
+                        Decryption password. Only needed if selfstats needs to
+                        access text / keystrokes data. If your database in not
+                        encrypted, specify -p="" here. If you don't specify a
+                        password in the command line arguments or in a config
+                        file, and the statistics you ask for require a
+                        password, a dialog will pop up asking for the
+                        password. If you give your password on the command
+                        line, remember that it will most likely be stored in
+                        plain text in your shell history.
+  -d DATA_DIR, --data-dir DATA_DIR
+                        Data directory for selfspy, where the database is
+                        stored. Remember that Selfspy must have read/write
+                        access. Default is ~/.selfspy
+  -s, --showtext        Also show the text column. This switch is ignored if
+                        at least one of the summary options are used. Requires
+                        password.
+  -D DATE [DATE ...], --date DATE [DATE ...]
+                        Which date to start the listing or summarizing from.
+                        If only one argument is given (--date 13) it is
+                        interpreted as the closest date in the past on that
+                        day. If two arguments are given (--date 03 13) it is
+                        interpreted as the closest date in the past on that
+                        month and that day, in that order. If three arguments
+                        are given (--date 2012 03 13) it is interpreted as
+                        YYYY MM DD
+  -C CLOCK, --clock CLOCK
+                        Time to start the listing or summarizing from. Given
+                        in 24 hour format as --clock 13:25. If no --date is
+                        given, interpret the time as today if that results in
+                        sometimes in the past, otherwise as yesterday.
+  -i ID, --id ID        Which row ID to start the listing or summarizing from.
+                        If --date and/or --clock is given, this option is
+                        ignored.
+  -b BACK [BACK ...], --back BACK [BACK ...]
+                        --back <period> [<unit>] Start the listing or summary
+                        this much back in time. Use this as an alternative to
+                        --date, --clock and --id. If any of those are given,
+                        this option is ignored. <unit> is either "s"
+                        (seconds), "m" (minutes), "h" (hours), "d" (days) or
+                        "w" (weeks). If no unit is given, it is assumed to be
+                        hours.
+  -l LIMIT [LIMIT ...], --limit LIMIT [LIMIT ...]
+                        --limit <period> [<unit>]. If the start is given in
+                        --date/--clock, the limit is a time period given by
+                        <unit>. <unit> is either "s" (seconds), "m" (minutes),
+                        "h" (hours), "d" (days) or "w" (weeks). If no unit is
+                        given, it is assumed to be hours. If the start is
+                        given with --id, limit has no unit and means that the
+                        maximum row ID is --id + --limit.
+  -m nr, --min-keys nr  Only allow entries with at least <nr> keystrokes
+  -T regexp, --title regexp
+                        Only allow entries where a search for this <regexp> in
+                        the window title matches something. All regular
+                        expressions are case insensitive.
+  -P regexp, --process regexp
+                        Only allow entries where a search for this <regexp> in
+                        the process matches something.
+  -B regexp, --body regexp
+                        Only allow entries where a search for this <regexp> in
+                        the body matches something. Do not use this filter
+                        when summarizing ratios or activity, as it has no
+                        effect on mouse clicks. Requires password.
+  --clicks              Summarize number of mouse button clicks for all
+                        buttons.
+  --key-freqs           Summarize a table of absolute and relative number of
+                        keystrokes for each used key during the time period.
+                        Requires password.
+  --human-readable      This modifies the --body entry and honors backspace.
+  --active [seconds]    Summarize total time spent active during the period.
+                        The optional argument gives how many seconds after
+                        each mouse click (including scroll up or down) or
+                        keystroke that you are considered active. Default is
+                        180.
+  --ratios [seconds]    Summarize the ratio between different metrics in the
+                        given period. "Clicks" will not include up or down
+                        scrolling. The optional argument is the "seconds"
+                        cutoff for calculating active use, like --active.
+  --periods [seconds]   List active time periods. Optional argument works same
+                        as for --active.
+  --pactive [seconds]   List processes, sorted by time spent active in them.
+                        Optional argument works same as for --active.
+  --tactive [seconds]   List window titles, sorted by time spent active in
+                        them. Optional argument works same as for --active.
+  --pkeys               List processes sorted by number of keystrokes.
+  --tkeys               List window titles sorted by number of keystrokes.
+
+See the README file or http://gurgeh.github.com/selfspy for examples.
+#+end_example
