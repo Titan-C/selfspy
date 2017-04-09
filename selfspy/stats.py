@@ -30,10 +30,9 @@ import configparser
 
 from collections import Counter
 
-from selfspy import make_encrypter
 from selfspy import config as cfg
 from selfspy import check_password
-from selfspy.password_dialog import get_password
+from selfspy.cipher_dialog import get_keyring_cipher_key, make_encrypter
 from selfspy.period import Period
 
 from selfspy import models
@@ -135,7 +134,7 @@ def make_period(q, period, who, start, prop):
         sys.exit(1)
     pmatch = re.match(
         "(\d+)([" + "".join(PERIOD_LOOKUP.keys()) + "]?)", periodstr)
-    if pmatch == None:
+    if pmatch is None:
         print('%s has an unrecognizable format: %s' % (who, periodstr))
         sys.exit(1)
     period = [pmatch.group(1)] + ([pmatch.group(2)] if pmatch.group(2) else [])
@@ -572,10 +571,9 @@ def main():
     ss = Selfstats(os.path.join(args['data_dir'], cfg.DBNAME), args)
 
     if ss.need_text or ss.need_keys:
-        if args['password'] is None:
-            args['password'] = get_password(verify=check_with_encrypter)
+        cipher_key = get_keyring_cipher_key(verify=check_with_encrypter)
 
-        models.ENCRYPTER = make_encrypter(args['password'])
+        models.ENCRYPTER = make_encrypter(cipher_key)
 
         if not check_password.check(args['data_dir'], models.ENCRYPTER, read_only=True):
             print('Password failed')

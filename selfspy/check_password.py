@@ -30,11 +30,8 @@ def check(data_dir, decrypter, read_only=False):
             s = f.read()
         return decrypter.decrypt(s) == MAGIC_STRING
     else:
-        if decrypter is not None:
-            if read_only:
-                return False
-            else:
-                s = decrypter.encrypt(MAGIC_STRING)
-                with open(fname, 'wb') as f:
-                    f.write(s)
-        return True
+        if decrypter is not None and not read_only:
+            with open(fname, 'wb') as f:
+                f.write(decrypter.encrypt(MAGIC_STRING))
+            return True
+    return False

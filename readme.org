@@ -3,6 +3,8 @@
 My version reboot of the selfspy daemon that continuously monitors and
 stores what you are doing on your computer.
 
+This is python 3 only software once it works.
+
 * Installing
 
 All linux dependencies shall be installed by setuptools from packages
