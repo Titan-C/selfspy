@@ -1,15 +1,9 @@
-dist: trusty
-sudo: false
 language: python
-addons:
-  apt:
-    packages:
-    - libdbus-glib-1-dev
 python:
   - "3.5"
   - "3.6"
 install:
-  - pip install dbus-python
+  - pip install keyrings.alt
   - python setup.py install
 script:
   - pytest
