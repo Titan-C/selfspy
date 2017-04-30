@@ -1,0 +1,43 @@
+#+TITLE:  study connection to sql
+#+AUTHOR: Óscar Nájera
+#+EMAIL:  hello@oscarnajera.com
+#+DATE:   2017 Apr 30
+#+STARTUP: hideblocks
+#+OPTIONS: toc:nil num:nil
+* What is on database
+Using
+#+BEGIN_SRC bash
+sqlite3 .testpy3/selfspy.sqlite
+#+END_SRC
+I enter the database and with the call `.tables` I discover there are
+5 tables: (click geometry keys process window)
+
+#+BEGIN_SRC python
+  from sqlalchemy import create_engine
+  engine = create_engine("sqlite:////home/oscar/dev/selfspy/.testpy3/selfspy.sqlite")
+  cnx= engine.connect()
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC python :results output
+  import sqlite3
+  import pandas as pd
+
+  # Create a SQL connection to our SQLite database and transfer to pandas
+  con = sqlite3.connect("/home/oscar/dev/selfspy/.testpy3/selfspy.sqlite")
+  window = pd.read_sql_query("SELECT * from window", con, index_col='id')
+  process = pd.read_sql_query("SELECT * from process", con,
+                              index_col='id', parse_dates=['created_at'])
+  keys = pd.read_sql_query("SELECT * from keys", con,
+                           index_col='id', parse_dates=['created_at', 'started'])
+  con.close()
+  # total activity
+  import matplotlib.pyplot as plt
+  plt.plot(df['created_at'] - df['started'])
+  plt.show()
+#+END_SRC
+
+#+RESULTS:
+:
+:
+:
