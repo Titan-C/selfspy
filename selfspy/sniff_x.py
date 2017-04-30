@@ -42,9 +42,7 @@ KEYSYMDICT = {getattr(XK, name): name[3:]
 
 
 def lookup_keysym(keysym):
-    if keysym in KEYSYMDICT:
-        return KEYSYMDICT[keysym]
-    return "[%d]" % keysym
+    return KEYSYMDICT.get(keysym, "[%d]" % keysym)
 
 
 class Sniffer:
