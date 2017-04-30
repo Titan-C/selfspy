@@ -11,9 +11,9 @@ All linux dependencies shall be installed by setuptools from packages
 in PyPI.
 
 #+BEGIN_SRC bash
-git clone https://github.com/Titan-C/selfspy.git
-cd selfspy
-python setup.py install
+  git clone https://github.com/Titan-C/selfspy.git
+  cd selfspy
+  python setup.py install
 #+END_SRC
 
 * Running selfspy

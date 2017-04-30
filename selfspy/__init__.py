@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Copyright 2012 David Fendrich
+# Copyright 2017 Oscar Najera
 
 # This file is part of Selfspy
 
@@ -29,7 +30,6 @@ from selfspy.activity_store import ActivityStore
 from selfspy.cipher_dialog import get_keyring_cipher_key, generate_cipherkey, make_encrypter
 
 from selfspy import check_password
-
 from selfspy import config as cfg
 
 
@@ -41,17 +41,17 @@ def parse_config():
     args, remaining_argv = conf_parser.parse_known_args()
 
     defaults = {}
+    config = configparser.ConfigParser()
     if args.config:
         if not os.path.exists(args.config):
             raise EnvironmentError(
                 "Config file %s doesn't exist." % args.config)
-        config = configparser.SafeConfigParser()
         config.read([args.config])
         defaults = dict(config.items('Defaults'))
     else:
-        if os.path.exists(os.path.expanduser('~/.selfspy/selfspy.conf')):
-            config = configparser.SafeConfigParser()
-            config.read([os.path.expanduser('~/.selfspy/selfspy.conf')])
+        default_conf_file = os.path.expanduser('~/.selfspy/selfspy.conf')
+        if os.path.exists(default_conf_file):
+            config.read(default_conf_file)
             defaults = dict(config.items('Defaults'))
 
     parser = argparse.ArgumentParser(
