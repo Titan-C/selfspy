@@ -414,16 +414,16 @@ class Selfstats:
 
         if self.args['pkeys']:
             print('Processes sorted by keystrokes:')
-            pdata = self.processes.items()
-            pdata.sort(key=lambda x: x[1].get('keystrokes', 0), reverse=True)
+            pdata = sorted(self.processes.items(),
+                           key=lambda x: x[1].get('keystrokes', 0), reverse=True)
             for name, data in pdata:
                 print(name, data.get('keystrokes', 0))
             print()
 
         if self.args['tkeys']:
             print('Window titles sorted by keystrokes:')
-            wdata = self.windows.items()
-            wdata.sort(key=lambda x: x[1].get('keystrokes', 0), reverse=True)
+            wdata = sorted(self.windows.items(), key=lambda x: x[1].get(
+                'keystrokes', 0), reverse=True)
             for name, data in wdata:
                 print(name, data.get('keystrokes', 0))
             print()
@@ -432,8 +432,8 @@ class Selfstats:
             print('Processes sorted by activity:')
             for p in self.processes.values():
                 p['active_time'] = int(p['activity'].calc_total())
-            pdata = self.processes.items()
-            pdata.sort(key=lambda x: x[1]['active_time'], reverse=True)
+            pdata = sorted(self.processes.items(),
+                           key=lambda x: x[1]['active_time'], reverse=True)
             for name, data in pdata:
                 print('%s, %s' % (name, pretty_seconds(data['active_time'])))
             print()
@@ -442,8 +442,8 @@ class Selfstats:
             print('Window titles sorted by activity:')
             for w in self.windows.values():
                 w['active_time'] = int(w['activity'].calc_total())
-            wdata = self.windows.items()
-            wdata.sort(key=lambda x: x[1]['active_time'], reverse=True)
+            wdata = sorted(self.windows.items(),
+                           key=lambda x: x[1]['active_time'], reverse=True)
             for name, data in wdata:
                 print('%s, %s' % (name, pretty_seconds(data['active_time'])))
             print()

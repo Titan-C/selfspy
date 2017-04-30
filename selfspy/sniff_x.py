@@ -109,7 +109,7 @@ class Sniffer:
 
         cur_class, cur_window, cur_name = self.get_cur_window()
         if cur_class:
-            cur_geo = self.get_geometry(cur_window)
+            cur_geo = get_geometry(cur_window)
             if cur_geo:
                 self.screen_hook(cur_class,
                                  cur_name,
