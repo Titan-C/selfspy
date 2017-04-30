@@ -27,7 +27,8 @@ from Xlib.error import XError
 from Xlib.protocol import rq
 
 
-def state_to_idx(state):  # this could be a dict, but I might want to extend it.
+# this could be a dict, but I might want to extend it.
+def state_to_idx(state):
     if state == 1:
         return 1
     if state == 128:
@@ -220,13 +221,14 @@ class Sniffer:
         cur_name = cur_name or ''
         return cur_class, cur_window, cur_name
 
-    def get_geometry(self, cur_window):
-        i = 0
-        geo = None
-        while i < 10:
-            try:
-                geo = cur_window.get_geometry()
-                break
-            except XError:
-                i += 1
-        return geo
+
+def get_geometry(cur_window):
+    i = 0
+    geo = None
+    while i < 10:
+        try:
+            geo = cur_window.get_geometry()
+            break
+        except XError:
+            i += 1
+    return geo

@@ -19,11 +19,11 @@ def make_encrypter(cipher_key):
 
 
 def get_keyring_cipher_key(verify):
-    usr = getpass.getuser()
-    cipher_key = keyring.get_password('Selfspy', usr)
+    user = getpass.getuser()
+    cipher_key = keyring.get_password('Selfspy', user)
 
     if not verify(cipher_key):
-        raise IOError("The cipher key is not valid"
+        raise IOError("The cipher key is not valid\n"
                       "To setup Selfspy cipher read configuration setup")
 
     return cipher_key
@@ -35,6 +35,11 @@ def set_keyring_cipher_key(cipher_key):
 
 
 def generate_cipherkey():
+    """Generates and saves in keyring a Fernet cipherkey
+
+.. seealso::
+    https://github.com/pyca/cryptography
+"""
     print("Generating encryption key")
     cipherkey = Fernet.generate_key()
     print("key generated. Saving to Keychain")

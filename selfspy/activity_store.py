@@ -1,4 +1,5 @@
 # Copyright 2012 David Fendrich
+# Copyright 2017 Oscar Najera
 
 # This file is part of Selfspy
 
@@ -18,11 +19,11 @@
 import time
 from datetime import datetime
 from functools import reduce
+import platform
 NOW = datetime.now
 
 import sqlalchemy
 
-import platform
 if platform.system() == 'Darwin':
     from selfspy import sniff_cocoa as sniffer
 elif platform.system() == 'Windows':
@@ -34,7 +35,9 @@ from selfspy import models
 from selfspy.models import Process, Window, Geometry, Click, Keys
 
 
-SKIP_MODIFIERS = {"", "Shift_L", "Control_L", "Super_L", "Alt_L", "Super_R", "Control_R", "Shift_R", "[65027]"}  # [65027] is AltGr in X for some ungodly reason.
+# [65027] is AltGr in X for some ungodly reason.
+SKIP_MODIFIERS = {"", "Shift_L", "Control_L", "Super_L",
+                  "Alt_L", "Super_R", "Control_R", "Shift_R", "[65027]"}
 
 SCROLL_BUTTONS = {4, 5, 6, 7}
 SCROLL_COOLOFF = 10  # seconds
@@ -212,12 +215,16 @@ class ActivityStore:
 
     def got_key(self, keycode, state, string, is_repeat):
         """ Receives key-presses and queues them for storage.
-            keycode is the code sent by the keyboard to represent the pressed key
-            state is the list of modifier keys pressed, each modifier key should be represented
-                  with capital letters and optionally followed by an underscore and location
-                  specifier, i.e: SHIFT or SHIFT_L/SHIFT_R, ALT, CTRL
-            string is the string representation of the key press
-            repeat is True if the current key is a repeat sent by the keyboard """
+
+            keycode is the code sent by the keyboard to represent the
+            pressed key state is the list of modifier keys pressed,
+            each modifier key should be represented with capital
+            letters and optionally followed by an underscore and
+            location specifier, i.e: SHIFT or SHIFT_L/SHIFT_R, ALT,
+            CTRL string is the string representation of the key press
+            repeat is True if the current key is a repeat sent by the
+            keyboard """
+
         now = time.time()
 
         if string in SKIP_MODIFIERS:
@@ -244,10 +251,13 @@ class ActivityStore:
         self.trycommit()
 
     def got_mouse_click(self, button, x, y):
-        """ Receives mouse clicks and sends them for storage.
-            Mouse buttons: left: 1, middle: 2, right: 3, scroll up: 4, down:5, left:6, right:7
-            x,y are the coordinates of the keypress
-            press is True if it pressed down, False if released"""
+        """Receives mouse clicks and sends them for storage.
+
+           Mouse buttons: left: 1, middle: 2, right: 3, scroll up: 4,
+            down:5, left:6, right:7 x,y are the coordinates of the
+            keypress press is True if it pressed down, False if
+            released"""
+
         if button in [4, 5, 6, 7]:
             if time.time() - self.last_scroll[button] < SCROLL_COOLOFF:
                 return

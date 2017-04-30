@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Copyright 2012 Bjarte Johansen
+# Copyright 2017 Oscar Najera
 
 # This file is part of Selfspy
 
