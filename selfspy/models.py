@@ -34,6 +34,7 @@ def initialize(fname):
     Base.metadata.create_all(engine)
     return sessionmaker(bind=engine)
 
+
 ENCRYPTER = None
 
 Base = declarative_base()
@@ -62,7 +63,8 @@ class Process(SpookMixin, Base):
 class Window(SpookMixin, Base):
     title = Column(Unicode, index=True)
 
-    process_id = Column(Integer, ForeignKey('process.id'), nullable=False, index=True)
+    process_id = Column(Integer, ForeignKey(
+        'process.id'), nullable=False, index=True)
     process = relationship("Process", backref=backref('windows'))
 
     def __init__(self, title, process_id):
@@ -98,7 +100,8 @@ class Click(SpookMixin, Base):
     y = Column(Integer, nullable=False)
     nrmoves = Column(Integer, nullable=False)
 
-    process_id = Column(Integer, ForeignKey('process.id'), nullable=False, index=True)
+    process_id = Column(Integer, ForeignKey(
+        'process.id'), nullable=False, index=True)
     process = relationship("Process", backref=backref('clicks'))
 
     window_id = Column(Integer, ForeignKey('window.id'), nullable=False)
@@ -151,7 +154,8 @@ class Keys(SpookMixin, Base):
     text = Column(Binary, nullable=False)
     started = Column(DateTime, nullable=False)
 
-    process_id = Column(Integer, ForeignKey('process.id'), nullable=False, index=True)
+    process_id = Column(Integer, ForeignKey(
+        'process.id'), nullable=False, index=True)
     process = relationship("Process", backref=backref('keys'))
 
     window_id = Column(Integer, ForeignKey('window.id'), nullable=False)
@@ -199,7 +203,7 @@ class Keys(SpookMixin, Base):
         return json.loads(zlib.decompress(keys))
 
     def to_humanreadable(self, text):
-        backrex = re.compile("\<\[Backspace\]x?(\d+)?\>",re.IGNORECASE)
+        backrex = re.compile("\<\[Backspace\]x?(\d+)?\>", re.IGNORECASE)
         matches = backrex.search(text)
         while matches is not None:
             backspaces = matches.group(1)

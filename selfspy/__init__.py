@@ -56,6 +56,7 @@ def parse_config():
 
     parser = argparse.ArgumentParser(
         description='Monitor your computer activities and store them in an encrypted database for later analysis or disaster recovery.', parents=[conf_parser])
+
     parser.set_defaults(**defaults)
     parser.add_argument('--setup', action="store_true",
                         help="First time setting up Selfspy")

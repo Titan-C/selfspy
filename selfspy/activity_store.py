@@ -163,7 +163,8 @@ class ActivityStore:
             key = press.key
             if specials_in_row and key != lastpress.key:
                 if specials_in_row > 1:
-                    lastpress.key = '%s]x%d>' % (lastpress.key[:-2], specials_in_row)
+                    lastpress.key = '%s]x%d>' % (
+                        lastpress.key[:-2], specials_in_row)
 
                 newpresses.append(lastpress)
                 specials_in_row = 0
@@ -176,7 +177,8 @@ class ActivityStore:
 
         if specials_in_row:
             if specials_in_row > 1:
-                lastpress.key = '%s]x%d>' % (lastpress.key[:-2], specials_in_row)
+                lastpress.key = '%s]x%d>' % (
+                    lastpress.key[:-2], specials_in_row)
             newpresses.append(lastpress)
 
         self.key_presses = newpresses
@@ -189,7 +191,8 @@ class ActivityStore:
         if self.key_presses:
             keys = [press.key for press in self.key_presses]
             timings = [press.time for press in self.key_presses]
-            add = lambda count, press: count + (0 if press.is_repeat else 1)
+
+            def add(count, press): return count + (0 if press.is_repeat else 1)
             nrkeys = reduce(add, self.key_presses, 0)
 
             curtext = u""
@@ -235,7 +238,8 @@ class ActivityStore:
         elif len(string) > 1:
             string = '<[%s]>' % string
 
-        self.key_presses.append(KeyPress(string, now - self.last_key_time, is_repeat))
+        self.key_presses.append(
+            KeyPress(string, now - self.last_key_time, is_repeat))
         self.last_key_time = now
 
     def store_click(self, button, x, y):
