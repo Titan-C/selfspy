@@ -37,12 +37,18 @@ def state_to_idx(state):  # this could be a dict, but I might want to extend it.
     return 0
 
 
+KEYSYMDICT = {getattr(XK, name): name[3:]
+              for name in dir(XK) if name.startswith("XK_")}
+
+
+def lookup_keysym(keysym):
+    if keysym in KEYSYMDICT:
+        return KEYSYMDICT[keysym]
+    return "[%d]" % keysym
+
+
 class Sniffer:
     def __init__(self):
-        self.keysymdict = {}
-        for name in dir(XK):
-            if name.startswith("XK_"):
-                self.keysymdict[getattr(XK, name)] = name[3:]
 
         self.key_hook = lambda x: True
         self.mouse_button_hook = lambda x: True
@@ -137,7 +143,7 @@ class Sniffer:
         if cn < 256:
             return chr(cn)
         else:
-            return self.lookup_keysym(cn)
+            return lookup_keysym(cn)
 
     def key_event(self, event):
         flags = event.state
@@ -157,11 +163,6 @@ class Sniffer:
 
     def button_event(self, event):
         return event.detail, event.root_x, event.root_y
-
-    def lookup_keysym(self, keysym):
-        if keysym in self.keysymdict:
-            return self.keysymdict[keysym]
-        return "[%d]" % keysym
 
     def get_wm_name(self, win):
         """
