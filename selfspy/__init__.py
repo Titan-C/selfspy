@@ -20,12 +20,10 @@
 from __future__ import print_function
 import os
 import sys
+import fcntl
 
 import argparse
 import configparser
-import hashlib
-
-from lockfile import LockFile
 
 from selfspy.activity_store import ActivityStore
 from selfspy.cipher_dialog import get_keyring_cipher_key, generate_cipherkey, make_encrypter
@@ -85,8 +83,10 @@ def main():
     os.makedirs(args['data_dir'], exist_ok=True)
 
     lockname = os.path.join(args['data_dir'], cfg.LOCK_FILE)
-    cfg.LOCK = LockFile(lockname)
-    if cfg.LOCK.is_locked():
+    cfg.LOCK = open(lockname, 'w')
+    try:
+        fcntl.lockf(cfg.LOCK, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
         print('%s is locked! I am probably already running.' % lockname)
         print('If you can find no selfspy process running, it is a stale lock and you can safely remove it.')
         print('Shutting down.')
@@ -104,8 +104,7 @@ def main():
     encrypter = make_encrypter(cipher_key)
 
     if not check_password.check(args['data_dir'], encrypter):
-        print('Password failed')
-        sys.exit(1)
+        raise ValueError('Password failed')
 
     if args["new_cipherkey"]:
         new_cipher_key = generate_cipherkey()
@@ -127,15 +126,14 @@ def main():
                            encrypter,
                            store_text=(not args['no_text']),
                            repeat_char=(not args['no_repeat']))
-    cfg.LOCK.acquire()
+
     try:
         astore.run()
     except SystemExit:
         astore.close()
     except KeyboardInterrupt:
         pass
-    # In OS X this is has to be released in sniff_cocoa
-    cfg.LOCK.release()
+
 
 if __name__ == '__main__':
     main()
