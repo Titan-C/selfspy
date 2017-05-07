@@ -13,8 +13,6 @@ else:
 with open(os.path.join(os.path.dirname(__file__), req_file)) as f:
     requires = list(f.readlines())
 
-print('"%s"' % requires)
-
 
 setup(name="selfspy",
       version='0.3.0',
@@ -25,5 +23,7 @@ setup(name="selfspy",
           future reference and all-around fun!
       """.strip().split('\n')),
       install_requires=requires,
+      setup_requires=['pytest-runner'],
+      tests_require=['pytest', 'pytest-cov'],
       entry_points=dict(console_scripts=['selfspy=selfspy:main',
                                          'selfstats=selfspy.stats:main']))
