@@ -31,8 +31,7 @@ import configparser
 from collections import Counter
 
 from selfspy import config as cfg
-from selfspy import check_password
-from selfspy.cipher_dialog import get_keyring_cipher_key, make_encrypter
+from selfspy import cipher_dialog
 from selfspy.period import Period
 
 from selfspy import models
@@ -564,20 +563,11 @@ def main():
 
     args['data_dir'] = os.path.expanduser(args['data_dir'])
 
-    def check_with_encrypter(password):
-        encrypter = make_encrypter(password)
-        return check_password.check(args['data_dir'], encrypter, read_only=True)
-
     ss = Selfstats(os.path.join(args['data_dir'], cfg.DBNAME), args)
 
     if ss.need_text or ss.need_keys:
-        cipher_key = get_keyring_cipher_key(verify=check_with_encrypter)
-
-        models.ENCRYPTER = make_encrypter(cipher_key)
-
-        if not check_password.check(args['data_dir'], models.ENCRYPTER, read_only=True):
-            print('Password failed')
-            sys.exit(1)
+        cipher_key = cipher_dialog.get_keyring_cipher_key()
+        cipher_dialog.verify_cipher_key(cipher_key, args["data_dir"], True)
 
     ss.do()
 
