@@ -1,4 +1,5 @@
 SQLAlchemy>=1.1.9
 cryptography>=1.8.1
 keyring>=10.3.2
+dbus-python>=1.2.4
 python-xlib>=0.19
