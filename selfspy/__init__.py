@@ -27,9 +27,7 @@ import argparse
 import configparser
 
 from selfspy.activity_store import ActivityStore
-from selfspy.cipher_dialog import get_keyring_cipher_key, generate_cipherkey, make_encrypter
-
-from selfspy import check_password
+from selfspy import cipher_dialog
 from selfspy import config as cfg
 
 
@@ -73,6 +71,32 @@ def parse_config():
     return parser.parse_args()
 
 
+def new_cipher(decrypter, args):
+    """Encrypt database with new decrypter
+
+    Parameters
+    ----------
+    decrypter : function to decrypt database
+
+    args : dictionary
+        Setup arguments
+
+    """
+    new_cipher_key = cipher_dialog.generate_cipherkey()
+    cipher_dialog.save_keyring_cipher_key(new_cipher_key)
+
+    new_encrypter = cipher_dialog.make_encrypter(new_cipher_key)
+    print('Re-encrypting your keys...')
+    astore = ActivityStore(os.path.join(args['data_dir'], cfg.DBNAME),
+                           decrypter,
+                           store_text=(not args['no_text']),
+                           repeat_char=(not args['no_repeat']))
+    astore.change_password(new_encrypter)
+    # delete the old password.digest
+    os.remove(os.path.join(args['data_dir'], cipher_dialog.DIGEST_NAME))
+    cipher_dialog.check(args['data_dir'], new_encrypter)
+
+
 def main():
     try:
         args = vars(parse_config())
@@ -94,31 +118,19 @@ def main():
         sys.exit(1)
 
     if args["setup"]:
-        cipher_key = generate_cipherkey()
+        cipher_key = cipher_dialog.generate_cipherkey()
+        cipher_dialog.save_keyring_cipher_key(cipher_key)
 
-    def check_with_encrypter(cipher_key):
-        encrypter = make_encrypter(cipher_key)
-        return check_password.check(args['data_dir'], encrypter)
+    cipher_key = cipher_dialog.get_keyring_cipher_key()
+    cipher_dialog.verify_cipher_key(cipher_key, args["data_dir"], True)
 
-    cipher_key = get_keyring_cipher_key(verify=check_with_encrypter)
+    encrypter = cipher_dialog.make_encrypter(cipher_key)
 
-    encrypter = make_encrypter(cipher_key)
-
-    if not check_password.check(args['data_dir'], encrypter):
+    if not cipher_dialog.check(args['data_dir'], encrypter):
         raise ValueError('Password failed')
 
     if args["new_cipherkey"]:
-        new_cipher_key = generate_cipherkey()
-        new_encrypter = make_encrypter(new_cipher_key)
-        print('Re-encrypting your keys...')
-        astore = ActivityStore(os.path.join(args['data_dir'], cfg.DBNAME),
-                               encrypter,
-                               store_text=(not args['no_text']),
-                               repeat_char=(not args['no_repeat']))
-        astore.change_password(new_encrypter)
-        # delete the old password.digest
-        os.remove(os.path.join(args['data_dir'], check_password.DIGEST_NAME))
-        check_password.check(args['data_dir'], new_encrypter)
+        new_cipher(encrypter, args)
         # don't assume we want the logger to run afterwards
         print('Exiting...')
         sys.exit(0)
