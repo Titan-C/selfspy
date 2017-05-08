@@ -11,7 +11,7 @@ else:
     req_file = 'requirements.txt'
 
 with open(os.path.join(os.path.dirname(__file__), req_file)) as f:
-    requires = list(f.readlines())
+    requires = f.read().split()
 
 
 setup(name="selfspy",
