@@ -568,6 +568,7 @@ def main():
     if ss.need_text or ss.need_keys:
         cipher_key = cipher_dialog.get_keyring_cipher_key()
         cipher_dialog.verify_cipher_key(cipher_key, args["data_dir"], True)
+        models.ENCRYPTER = cipher_dialog.make_encrypter(cipher_key)
 
     ss.do()
 
