@@ -126,6 +126,7 @@ class Click(SpookMixin, Base):
 
 
 def pad(s, padnum):
+    """Pad with null characters at the end of the string"""
     ls = len(s)
     if ls % padnum == 0:
         return s
@@ -134,11 +135,9 @@ def pad(s, padnum):
 
 def maybe_encrypt(s, other_encrypter=None):
     if other_encrypter is not None:
-        s = pad(s, 8)
-        s = other_encrypter.encrypt(s)
+        s = other_encrypter.encrypt(pad(s, 8))
     elif ENCRYPTER:
-        s = pad(s, 8)
-        s = ENCRYPTER.encrypt(s)
+        s = ENCRYPTER.encrypt(pad(s, 8))
     return s
 
 

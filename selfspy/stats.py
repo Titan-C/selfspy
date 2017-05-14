@@ -493,15 +493,28 @@ def parse_config():
         config.read([args.config])
         defaults = dict(config.items('Defaults') + config.items("Selfstats"))
 
-    parser = argparse.ArgumentParser(description="""Calculate statistics on selfspy data. Per default it will show non-text information that matches the filter. Adding '-s' means also show text. Adding any of the summary options will show those summaries over the given filter instead of the listing. Multiple summary options can be given to print several summaries over the same filter. If you give arguments that need to access text / keystrokes, you will be asked for the decryption password.""",
-                                     epilog="""See the README file or http://gurgeh.github.com/selfspy for examples.""", parents=[conf_parser])
+    parser = argparse.ArgumentParser(description="""Calculate statistics on
+    selfspy data. Per default it will show non-text information that
+    matches the filter. Adding '-s' means also show text. Adding any of the
+    summary options will show those summaries over the given filter instead
+    of the listing. Multiple summary options can be given to print several
+    summaries over the same filter. If you give arguments that need to
+    access text / keystrokes, you will be asked for the decryption
+    password.""", epilog="""See the README file or
+    http://gurgeh.github.com/selfspy for examples.""",
+                                     parents=[conf_parser])
+
     parser.set_defaults(**defaults)
     parser.add_argument('-p', '--password', help='Decryption password. Only needed if selfstats needs to access text / keystrokes data. If your database in not encrypted, specify -p="" here. If you don\'t specify a password in the command line arguments or in a config file, and the statistics you ask for require a password, a dialog will pop up asking for the password. If you give your password on the command line, remember that it will most likely be stored in plain text in your shell history.')
-    parser.add_argument('-d', '--data-dir', help='Data directory for selfspy, where the database is stored. Remember that Selfspy must have read/write access. Default is %s' %
-                        cfg.DATA_DIR, default=cfg.DATA_DIR)
+    parser.add_argument('-d', '--data-dir', help="""Data directory for
+                        selfspy, where the database is stored. Remember
+                        that Selfspy must have read/write access. Default
+                        is %s""" % cfg.DATA_DIR, default=cfg.DATA_DIR)
 
     parser.add_argument('-s', '--showtext', action='store_true',
-                        help='Also show the text column. This switch is ignored if at least one of the summary options are used. Requires password.')
+                        help="""Also show the text column. This switch is
+                        ignored if at least one of the summary options are
+                        used. Requires password.""")
 
     parser.add_argument('-D', '--date', nargs='+', help='Which date to start the listing or summarizing from. If only one argument is given (--date 13) it is interpreted as the closest date in the past on that day. If two arguments are given (--date 03 13) it is interpreted as the closest date in the past on that month and that day, in that order. If three arguments are given (--date 2012 03 13) it is interpreted as YYYY MM DD')
     parser.add_argument('-C', '--clock', type=str, help='Time to start the listing or summarizing from. Given in 24 hour format as --clock 13:25. If no --date is given, interpret the time as today if that results in sometimes in the past, otherwise as yesterday.')
