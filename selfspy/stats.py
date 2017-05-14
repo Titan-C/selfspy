@@ -70,7 +70,7 @@ def make_time_string(dates, clock):
         else:
             print('%s is of uncompatible type list of %s.' % (
                 dates[0], str(type(dates[0]))))
-    elif isinstance(dates, basestring):
+    elif isinstance(dates, str):
         datesstr = dates
     else:
         datesstr = now.strftime('%Y %m %d')
@@ -126,7 +126,7 @@ def make_period(q, period, who, start, prop):
         else:
             print('%s is of uncompatible type list of %s.' %
                   (who, str(type(period[0]))))
-    elif isinstance(period, basestring):
+    elif isinstance(period, str):
         periodstr = period.translate(None, " \t")
     else:
         print('%s is of uncompatible type %s.' % (who, str(type(period))))
@@ -317,9 +317,9 @@ class Selfstats:
                   row.process.name, '"%s"' % row.window.title, row.nrkeys, end=' ')
             if self.args['showtext']:
                 if self.need_humanreadable:
-                    print(row.decrypt_humanreadable().decode('utf8'))
+                    print(row.decrypt_humanreadable())
                 else:
-                    print(row.decrypt_text().decode('utf8'))
+                    print(row.decrypt_text())
             else:
                 print()
         print(rows, 'rows')

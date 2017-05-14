@@ -192,14 +192,14 @@ class Keys(SpookMixin, Base):
         self.keys = zkeys
 
     def decrypt_text(self):
-        return maybe_decrypt(self.text)
+        return maybe_decrypt(self.text).decode('utf8')
 
     def decrypt_humanreadable(self):
         return self.to_humanreadable(self.decrypt_text())
 
     def decrypt_keys(self):
         keys = maybe_decrypt(self.keys)
-        return json.loads(zlib.decompress(keys))
+        return json.loads(zlib.decompress(keys).decode('utf8'))
 
     def to_humanreadable(self, text):
         backrex = re.compile("\<\[Backspace\]x?(\d+)?\>", re.IGNORECASE)
