@@ -63,6 +63,27 @@ optional arguments:
 #+end_example
 
 * Getting the statistics
+
+** TODO Use pandas
+Transform old report calls into something treatable by pandas.
+- Generate report templates that look pretty. Something I may always be
+  willing to look at, at the end of the week or day or month.
+- Understand the activity time. when I call --pactive or the like, there is
+  something like an integration in time. Some time intervals give different
+  results.
+** TODO Working on the database
+*** TODO Database parser
+For now the only access to the database is through the stats module. I
+need a way to explore it with simpler commands. This can be the precursor
+to the pandas searchs
+*** TODO Migration utility
+I have data done with the old encrypter and password.
+So I need to create a template script where I load all the old modules to
+migrate the old database.
+- The change password should be outside of the main run script and should
+  belong to this template utility
+
+** Old style
 #+BEGIN_SRC bash :exports results :results output
 selfstats -h
 #+END_SRC
