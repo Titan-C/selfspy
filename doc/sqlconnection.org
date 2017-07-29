@@ -79,4 +79,65 @@ I enter the database and with the call `.tables` I discover there are
   plt.xlabel('')
 #+END_SRC
 
+#+BEGIN_SRC python :tangle ../examples/active_time.py
+  # -*- coding: utf-8 -*-
+  r"""
+  Total active time by program
+  ============================
+
+  Show the use of each program
+  """
+  # Author: Óscar Nájera
+  # License: 3-clause BSD
+
+  import matplotlib.pyplot as plt
+  import sqlite3
+  import pandas as pd
+
+  # Create a SQL connection to our SQLite database and transfer to pandas
+  con = sqlite3.connect("/home/oscar/dev/selfspy/.testpy3/selfspy.sqlite")
+
+  #################################################
+  # This gives the agregated statistics of keypress
+  process = pd.read_sql_query("SELECT id, name from process", con,
+                              index_col='id')
+
+  keys = pd.read_sql_query("SELECT process_id,created_at,nrkeys from keys", con,
+                           parse_dates=['created_at'])
+  key = keys.pivot('created_at', 'process_id',
+                   'nrkeys').fillna(0)  # .unstack(level=0)
+  key = key.resample('D').sum().fillna(0)
+  key.plot()
+  plt.show()
+
+  #################################################
+
+  # Select necessary columns
+  keys = pd.read_sql_query("SELECT * from keys", con,
+                           index_col='id', parse_dates=['created_at', 'started'])
+  keys['created_at'] - keys['started']
+#+END_SRC
+
 #+RESULTS:
+
+#+BEGIN_SRC python
+  import numpy as np
+  import pandas as pd
+
+  # Create some arbitrary event timestamps
+  eventA = np.array(np.random.randint(3600, size=8), dtype='M8[m]')
+  eventB = np.array(np.random.randint(3600, size=8), dtype='M8[m]')
+
+  # Subtraction works for numpy arrays
+  eventA - eventB
+
+  # fails with Series
+  pd.Series(eventA) - pd.Series(eventB)
+  # TypeError: data type "datetime" not understood
+
+  # fails
+  events = pd.DataFrame({'A': eventA,
+                         'B': eventB})
+  events['A'] - events['B']
+  # TypeError: data type "datetime" not understood
+#+END_SRC
