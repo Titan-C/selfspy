@@ -19,25 +19,64 @@ I enter the database and with the call `.tables` I discover there are
 #+END_SRC
 
 #+RESULTS:
+
+
 #+BEGIN_SRC python :results output
   import sqlite3
   import pandas as pd
 
   # Create a SQL connection to our SQLite database and transfer to pandas
   con = sqlite3.connect("/home/oscar/dev/selfspy/.testpy3/selfspy.sqlite")
-  window = pd.read_sql_query("SELECT * from window", con, index_col='id')
+  window = pd.read_sql_query("SELECT * from window", con, index_col='id',
+                             parse_dates=['created_at'])
   process = pd.read_sql_query("SELECT * from process", con,
                               index_col='id', parse_dates=['created_at'])
   keys = pd.read_sql_query("SELECT * from keys", con,
                            index_col='id', parse_dates=['created_at', 'started'])
   con.close()
-  # total activity
+#+END_SRC
+
+
+#+BEGIN_SRC python
+  click = pd.read_sql_query("SELECT * from keys", con)
+  click.tail()
+#+END_SRC
+
+
+#+BEGIN_SRC python :tangle ../examples/keypress.py
+  # -*- coding: utf-8 -*-
+  r"""
+  Total Key press by program
+  ==========================
+
+  Show the use of the keyboard in each program
+  """
+  # Author: Óscar Nájera
+  # License: 3-clause BSD
+
   import matplotlib.pyplot as plt
-  plt.plot(df['created_at'] - df['started'])
-  plt.show()
+  import sqlite3
+  import pandas as pd
+
+  # Create a SQL connection to our SQLite database and transfer to pandas
+  con = sqlite3.connect("/home/oscar/dev/selfspy/.testpy3/selfspy.sqlite")
+
+  # Select necessary columns
+  process = pd.read_sql_query("SELECT id, name from process", con,
+                              index_col='id')
+  keys = pd.read_sql_query("SELECT id, process_id, nrkeys from keys", con,
+                           index_col='id')
+  con.close()
+
+  total_keypress = keys.groupby('process_id').sum()
+  total_keypress = pd.merge(total_keypress, process,
+                            left_index=True, right_index=True)
+
+  total_keypress.sort_values(by='nrkeys', ascending=False)\
+      .plot(x='name', kind='bar', logy=True,
+            legend=False)
+  plt.ylabel('Total Key Presses')
+  plt.xlabel('')
 #+END_SRC
 
 #+RESULTS:
-:
-:
-:

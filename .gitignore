@@ -1,5 +1,8 @@
 *.pyc
 *.egg-info
+.eggs
+.cache
+.coverage
 dist/
 build/
 
@@ -9,3 +12,7 @@ bin/
 lib/
 include/
 .python-version
+
+# docs
+doc/gallery/
+_build
