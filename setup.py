@@ -1,14 +1,8 @@
 from __future__ import print_function
 import os
-import platform
 from setuptools import setup
 
-if platform.system() == 'Darwin':
-    req_file = 'osx-requirements.txt'
-elif platform.system() == "Windows":
-    req_file = "win-requirements.txt"
-else:
-    req_file = 'requirements.txt'
+req_file = 'requirements.txt'
 
 with open(os.path.join(os.path.dirname(__file__), req_file)) as f:
     requires = f.read().split()

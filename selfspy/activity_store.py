@@ -19,17 +19,11 @@
 import time
 from datetime import datetime
 from functools import reduce
-import platform
 NOW = datetime.now
 
 import sqlalchemy
 
-if platform.system() == 'Darwin':
-    from selfspy import sniff_cocoa as sniffer
-elif platform.system() == 'Windows':
-    from selfspy import sniff_win as sniffer
-else:
-    from selfspy import sniff_x as sniffer
+from selfspy import sniff_x as sniffer
 
 from selfspy import models
 from selfspy.models import Process, Window, Geometry, Click, Keys
