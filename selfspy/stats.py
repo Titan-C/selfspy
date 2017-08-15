@@ -24,6 +24,8 @@ import sys
 import re
 import datetime
 import time
+import json
+import zlib
 
 import argparse
 import configparser
@@ -156,19 +158,30 @@ def make_period(q, period, who, start, prop):
         return q.filter(prop >= start), start
 
 
-def create_times(row):
-    """Takes a row from the Keys table and returns
 
-    a list with the times of key presses contained in timings"""
-    current_time = time.mktime(row.created_at.timetuple())
+def load_timings(timings):
+    """Decompress keypress times from timings in bytes"""
+    return json.loads(zlib.decompress(timings))
+
+def create_times(created_at, timings):
+    """From the timestamp of created_at return 
+
+    parameters
+      - created_at : class 'datetime.datetime'
+      - timings: byte string
+    a list with the times of key presses contained in timings
+
+    S----+--+--+--created_at
+
+    """
+    current_time = time.mktime(created_at.timetuple())
 
     abs_times = [current_time]
-    for t in row.load_timings():
+    for t in load_timings(timings):
         current_time -= t
         abs_times.append(current_time)
     abs_times.reverse()
     return abs_times
-
 
 class Selfstats:
 
@@ -355,7 +368,8 @@ class Selfstats:
                  'keystrokes': len(row.load_timings())}
 
             if self.need_activity:
-                timings = create_times(row)
+                #timings = create_times(row)
+                timings = create_times(row.created_at,row.timings)
             if self.need_process:
                 updict(processes, d, timings, sub=row.process.name)
             if self.need_window:

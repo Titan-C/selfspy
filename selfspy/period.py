@@ -29,18 +29,22 @@ class Period:
         end = min(time + self.cutoff, self.maxtime)
 
         def check_in(i):
+            # if time is inside period extend period duration
+            # from time to cutoff
             if self.times[i][0] <= time <= self.times[i][1]:
                 self.times[i] = (self.times[i][0], max(end, self.times[i][1]))
                 return True
             return False
 
         def maybe_merge(i):
+            import ipdb; ipdb.set_trace()
             if ltimes > i + 1:
                 if self.times[i][1] >= self.times[i + 1][0]:
                     self.times[i] = (self.times[i][0], self.times[i + 1][1])
                     self.times.pop(i + 1)
 
         if ltimes == 0:
+            # makes the period time block
             self.times.append((time, end))
             return
 
