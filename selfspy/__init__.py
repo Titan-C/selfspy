@@ -1,9 +1,13 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+r"""
+Selfspy
+=======
 
+Goal of the script
+"""
 # Copyright 2012 David Fendrich
 # Copyright 2017 Oscar Najera
-
-# This file is part of Selfspy
 
 # Selfspy is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +22,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Selfspy.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, print_function
+
 import os
 import sys
 import fcntl
@@ -35,14 +40,18 @@ def parse_config():
     conf_parser = argparse.ArgumentParser(description=__doc__, add_help=False,
                                           formatter_class=argparse.RawDescriptionHelpFormatter)
     conf_parser.add_argument("-c", "--config",
-                             help="Config file with defaults. Command line parameters will override those given in the config file. The config file must start with a \"[Defaults]\" section, followed by [argument]=[value] on each line.", metavar="FILE")
+                             help="Config file with defaults. Command line "
+                             "parameters will override those given in the "
+                             "config file. The config file must start with "
+                             "a \"[Defaults]\" section, followed by"
+                             "[argument]=[value] on each line.", metavar="FILE")
     args, remaining_argv = conf_parser.parse_known_args()
 
     defaults = {}
     config = configparser.ConfigParser()
     if args.config:
         if not os.path.exists(args.config):
-            raise EnvironmentError(
+            raise FileNotFoundError(
                 "Config file %s doesn't exist." % args.config)
         config.read([args.config])
         defaults = dict(config.items('Defaults'))
@@ -53,7 +62,9 @@ def parse_config():
             defaults = dict(config.items('Defaults'))
 
     parser = argparse.ArgumentParser(
-        description='Monitor your computer activities and store them in an encrypted database for later analysis or disaster recovery.', parents=[conf_parser])
+        description="""Monitor your computer activities and store them in
+        an encrypted database for later analysis or disaster recovery.""",
+        parents=[conf_parser])
 
     parser.set_defaults(**defaults)
     parser.add_argument('--setup', action="store_true",
@@ -65,44 +76,14 @@ def parse_config():
     parser.add_argument('-r', '--no-repeat', action='store_true',
                         help='Do not store special characters as repeated characters.')
 
-    parser.add_argument('--new_cipherkey', action="store_true",
-                        help='Change the cipher key used to encrypt the keys columns and exit.')
 
     return parser.parse_args()
 
 
-def new_cipher(decrypter, args):
-    """Encrypt database with new decrypter
-
-    Parameters
-    ----------
-    decrypter : function to decrypt database
-
-    args : dictionary
-        Setup arguments
-
-    """
-    new_cipher_key = cipher_dialog.generate_cipherkey()
-    cipher_dialog.save_keyring_cipher_key(new_cipher_key)
-
-    new_encrypter = cipher_dialog.make_encrypter(new_cipher_key)
-    print('Re-encrypting your keys...')
-    astore = ActivityStore(os.path.join(args['data_dir'], cfg.DBNAME),
-                           decrypter,
-                           store_text=(not args['no_text']),
-                           repeat_char=(not args['no_repeat']))
-    astore.change_password(new_encrypter)
-    # delete the old password.digest
-    os.remove(os.path.join(args['data_dir'], cipher_dialog.DIGEST_NAME))
-    cipher_dialog.check(args['data_dir'], new_encrypter)
 
 
 def main():
-    try:
-        args = vars(parse_config())
-    except EnvironmentError as e:
-        print(str(e))
-        sys.exit(1)
+    args = vars(parse_config())
 
     args['data_dir'] = os.path.expanduser(args['data_dir'])
     os.makedirs(args['data_dir'], exist_ok=True)
@@ -129,11 +110,6 @@ def main():
     if not cipher_dialog.check(args['data_dir'], encrypter):
         raise ValueError('Password failed')
 
-    if args["new_cipherkey"]:
-        new_cipher(encrypter, args)
-        # don't assume we want the logger to run afterwards
-        print('Exiting...')
-        sys.exit(0)
 
     astore = ActivityStore(os.path.join(args['data_dir'], cfg.DBNAME),
                            encrypter,
