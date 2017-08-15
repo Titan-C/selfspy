@@ -199,8 +199,8 @@ class Selfstats:
         cutoff = [self.args[k] for k in ACTIVITY_ACTIONS if self.args[k]]
         if cutoff:
             if any(c != cutoff[0] for c in cutoff):
-                print('You must give the same time argument to the different parameters in the --active family, when you use several in the same query.')
-                sys.exit(1)
+                raise ValueError(
+                    'You must give the same time argument to the different parameters in the --active family, when you use several in the same query.')
             self.need_activity = cutoff[0]
             self.need_timings = True
         if self.args['key_freqs']:
