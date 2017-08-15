@@ -75,8 +75,8 @@ def get_keyring_cipher_key():
 def save_keyring_cipher_key(cipher_key):
     """Save cipher_key in keyring"""
     print("Saving cipher key to Keychain")
-    usr = getpass.getuser()
-    keyring.set_password('Selfspy', usr, cipher_key)
+    user = getpass.getuser()
+    keyring.set_password('Selfspy', user, cipher_key)
 
 
 ###############################################################################
