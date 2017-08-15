@@ -157,7 +157,11 @@ def make_period(q, period, who, start, prop):
 
 
 def create_times(row):
+    """Takes a row from the Keys table and returns
+
+    a list with the times of key presses contained in timings"""
     current_time = time.mktime(row.created_at.timetuple())
+
     abs_times = [current_time]
     for t in row.load_timings():
         current_time -= t
