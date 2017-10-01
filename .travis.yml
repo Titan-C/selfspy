@@ -13,7 +13,8 @@ install:
   - gpg -k
   - gpg --batch --gen-key tests/gpg-keygen-script
   - export GPGID="$(gpg -K | grep expires | cut -c13-20)"
-  - pass init $GPGIP
+  - echo $GPGID
+  - pass init $GPGID
 
   # Installing selfspy
   - pip install -r requirements.txt
