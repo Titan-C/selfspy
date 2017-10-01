@@ -8,6 +8,14 @@ addons:
       - gnupg
       - pass
 install:
+  # Setup password store keyring
+  - gpg -K
+  - gpg -k
+  - gpg --batch --gen-key tests/gpg-keygen-script
+  - gpg -K
+  - pass init
+
+  # Installing selfspy
   - pip install -r requirements.txt
   - python setup.py install
 script:

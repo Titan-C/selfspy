@@ -1,0 +1,10 @@
+%echo Generating a basic OpenPGP key
+Key-Type: 1
+Key-Length: 2048
+Subkey-Type: 1
+Subkey-Length: 2048
+Name-Real: travis
+Name-Email: travis@travis.bot
+Expire-Date: 360
+%commit
+%echo done
