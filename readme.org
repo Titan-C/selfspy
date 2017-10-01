@@ -62,6 +62,14 @@ optional arguments:
                         and exit.
 #+end_example
 
+* TODO Test environment
+** TODO Easy setup
+Ok in travis is how to setup the gpg and password-store. This steps should
+go into the readme + discussion that password-store makes my life very easy.
+** If the system has a setup
+Fail early telling there is a setup present and don't delete it link to
+migrating database.
+
 * Getting the statistics
 
 ** TODO Use pandas
