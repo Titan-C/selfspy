@@ -37,3 +37,14 @@ def test_make_encrypter():
 
     with pytest.raises(ValueError) as excinfo:
         cipher_dialog.make_encrypter(b'aoei')
+
+
+def test_save_cipher_key():
+    """Save a test entry in password-store"""
+    # saves the entry
+    cipher_dialog.pass_save_cipher_key(b'test', 'testuser')
+    # recovers the entry
+    assert cipher_dialog.pass_get_cipher_key('testuser') == b'test'
+    # fail on missing entry
+    with pytest.raises(ValueError) as excinfo:
+        cipher_dialog.pass_get_cipher_key('testuser1')

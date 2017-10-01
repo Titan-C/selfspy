@@ -7,14 +7,12 @@ Cipher functions
 
 import os
 import getpass
-import keyring
 from cryptography.fernet import Fernet, InvalidToken
+from subprocess import Popen, PIPE, run
 
 
 def generate_cipherkey():
     """Generates  a Fernet cipherkey
-
-    If save is True saves the key in keyring
 
     .. seealso::
         https://github.com/pyca/cryptography
@@ -66,17 +64,23 @@ def verify_cipher_key(cipher_key, data_dir, read_only):
                          "To setup Selfspy cipher read configuration setup")
 
 
-def get_keyring_cipher_key():
-    """Recover cipher_key from keyring"""
-    user = getpass.getuser()
-    return keyring.get_password('Selfspy', user)
+def pass_get_cipher_key(user):
+    """Recover cipher_key from password-store"""
+    passcmd = run(["pass", "selfspy/" + user],
+                  stdout=PIPE, stderr=PIPE)
+    if passcmd.returncode == 0:
+        return passcmd.stdout
+    else:
+        raise ValueError(passcmd.stderr)
 
 
-def save_keyring_cipher_key(cipher_key):
-    """Save cipher_key in keyring"""
-    print("Saving cipher key to Keychain")
-    usr = getpass.getuser()
-    keyring.set_password('Selfspy', usr, cipher_key)
+def pass_save_cipher_key(cipher_key, user):
+    """Save cipher_key in password-store using pass insert command"""
+    print("Saving cipher key to password-store")
+    proc = Popen(['pass', 'insert', '-f', '--multiline', 'selfspy/' + user],
+                 stdin=PIPE, stdout=PIPE)
+    proc.communicate(cipher_key)
+    proc.wait()
 
 
 ###############################################################################

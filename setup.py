@@ -18,6 +18,6 @@ setup(name="selfspy",
       """.strip().split('\n')),
       install_requires=requires,
       setup_requires=['sphinx', 'pytest-runner'],
-      tests_require=['pytest', 'pytest-cov'],
+      tests_require=['pytest-cov', 'pytest'],  # Somehow this order is relevant
       entry_points=dict(console_scripts=['selfspy=selfspy:main',
                                          'selfstats=selfspy.stats:main']))
