@@ -19,6 +19,7 @@
 
 from __future__ import print_function
 
+import getpass
 import os
 import sys
 import re
@@ -579,7 +580,8 @@ def main():
     ss = Selfstats(os.path.join(args['data_dir'], cfg.DBNAME), args)
 
     if ss.need_text or ss.need_keys:
-        cipher_key = cipher_dialog.get_keyring_cipher_key()
+        user = getpass.getuser()
+        cipher_key = cipher_dialog.pass_get_cipher_key(user)
         cipher_dialog.verify_cipher_key(cipher_key, args["data_dir"], True)
         models.ENCRYPTER = cipher_dialog.make_encrypter(cipher_key)
 

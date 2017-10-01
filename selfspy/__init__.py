@@ -24,9 +24,10 @@ Goal of the script
 
 from __future__ import division, absolute_import, print_function
 
+import fcntl
+import getpass
 import os
 import sys
-import fcntl
 
 import argparse
 import configparser
@@ -76,10 +77,7 @@ def parse_config():
     parser.add_argument('-r', '--no-repeat', action='store_true',
                         help='Do not store special characters as repeated characters.')
 
-
     return parser.parse_args()
-
-
 
 
 def main():
@@ -98,18 +96,19 @@ def main():
         print('Shutting down.')
         sys.exit(1)
 
+    user = getpass.getuser()
     if args["setup"]:
         cipher_key = cipher_dialog.generate_cipherkey()
-        cipher_dialog.save_keyring_cipher_key(cipher_key)
+        cipher_dialog.pass_save_cipher_key(cipher_key, user)
+        cipher_dialog.verify_cipher_key(cipher_key, args["data_dir"], False)
 
-    cipher_key = cipher_dialog.get_keyring_cipher_key()
+    cipher_key = cipher_dialog.pass_get_cipher_key(user)
     cipher_dialog.verify_cipher_key(cipher_key, args["data_dir"], True)
 
     encrypter = cipher_dialog.make_encrypter(cipher_key)
 
     if not cipher_dialog.check(args['data_dir'], encrypter):
         raise ValueError('Password failed')
-
 
     astore = ActivityStore(os.path.join(args['data_dir'], cfg.DBNAME),
                            encrypter,
