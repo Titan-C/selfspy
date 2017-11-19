@@ -13,7 +13,8 @@ import sqlite3
 import pandas as pd
 
 # Create a SQL connection to our SQLite database and transfer to pandas
-con = sqlite3.connect("/home/oscar/dev/selfspy/.testpy3/selfspy.sqlite")
+#con = sqlite3.connect("/home/oscar/dev/selfspy/.testpy3/selfspy.sqlite")
+con = sqlite3.connect("/home/me/dev/selfspy/.test/selfspy.sqlite")
 
 # Select necessary columns
 process = pd.read_sql_query("SELECT id, name from process", con,
@@ -31,3 +32,4 @@ total_keypress.sort_values(by='nrkeys', ascending=False)\
           legend=False)
 plt.ylabel('Total Key Presses')
 plt.xlabel('')
+plt.tight_layout()
