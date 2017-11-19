@@ -36,6 +36,13 @@ commits.columns = ['commits']
 commits.plot(kind='area')
 
 ###########################################################################
+# Commits by hour
+# ---------------
+
+series.groupby(series.index.hour).count().plot(kind='area', legend=False)
+plt.xlabel('Hour')
+
+###########################################################################
 # Commits by author
 # -----------------
 
