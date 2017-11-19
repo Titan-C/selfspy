@@ -23,8 +23,9 @@ log = subprocess.run(shlex.split("git log --format=' % aN, % ad'"),
 with open('log', 'w') as filelog:
     filelog.write(log.stdout)
 
-series = pd.read_csv('log', names=['Author', 'date'],
-                     parse_dates=['date'], index_col='date')
+series = pd.read_csv('log', names=['author', 'date'],
+                     parse_dates=['date'], index_col='date',
+                     dtype={'author': 'category'})
 
 ###########################################################################
 # Total Commits
@@ -38,7 +39,7 @@ commits.plot(kind='area')
 # Commits by author
 # -----------------
 
-authors_commits = series.groupby('Author').resample('2W').count()
+authors_commits = series.groupby('author').resample('2W').count()
 authors_commits.columns = ['commits']
 authors_commits.unstack(level=0).fillna(0).plot(
     kind='area', subplots=True, figsize=(11, 30), layout=(15, 2))
