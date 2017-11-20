@@ -17,7 +17,7 @@ import pandas as pd
 # Obtain git commit data
 # ----------------------
 
-log = subprocess.run(shlex.split("git log --format=' % aN, % ad'"),
+log = subprocess.run(shlex.split("git log --no-merges --format=' % aN, % ad'"),
                      stdout=subprocess.PIPE, encoding='utf-8')
 
 with open('log', 'w') as filelog:
